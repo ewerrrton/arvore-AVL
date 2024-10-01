@@ -1,18 +1,10 @@
 import java.util.Scanner;
 import java.util.Arrays;
+import java.util.ArrayList;
 
 public class Rotacoes {
 
-    private int index;
     private Node root;
-    private int size;
-    private int[] preOrder;
-
-    public Rotacoes() {
-        this.size =0;
-        this.index = 0;
-        this.preOrder = new int[3];
-    }
 
     public boolean isEmpty() {
         return this.root == null;
@@ -28,27 +20,28 @@ public class Rotacoes {
             rotacao.add(Integer.parseInt(valores[i]));
         }
 
-        rotacao.Order();
-        System.out.println(Arrays.toString(rotacao.preOrder));
-
     }
 
-    public void Order() {
-        Order(this.root);
+    public ArrayList<Integer> order() {
+        ArrayList<Integer> preOrder = new ArrayList<Integer>();
+        preOrder.clear();
+        this.order(this.root, preOrder);
+        return preOrder;
     }
 
-    private void Order(Node node) {
+    private ArrayList<Integer> order(Node node, ArrayList<Integer> preOrder) {
         if(node == null) {
-            return;
+            return preOrder;
         }
-        this.preOrder[this.index++] = node.value;
-        
-        Order(node.left);
-        Order(node.right);
+        preOrder.add(node.value);
+
+        order(node.left, preOrder);
+        order(node.right, preOrder);
+
+        return preOrder;
     }
 
     public void add(int element) {
-        this.size++;
         if(isEmpty()) {
             this.root = new Node(element);
             return;
@@ -93,7 +86,7 @@ public class Rotacoes {
 
         if(pai == this.root) {
             this.root = novoPai;
-        
+
         } else {
             if(pai == pai.parent.left) {
                 pai.parent.left = novoPai;
@@ -135,8 +128,22 @@ public class Rotacoes {
 
     public void rotacaoEsquerdaDireita(Node node) {
         Node filho = node.left;
+        print("rot_esq(" + filho.value + ")");
         node.left = rotacaoParaEsquerda(filho);
+        System.out.println(order());
+        print("rot_dir(" + node.value + ")");
         rotacaoParaDireita(node);
+        System.out.println(order());
+    }
+
+    public void rotacaoDireitaEsquerda(Node node) {
+        Node filho = node.right;
+        print("rot_dir(" + filho.value + ")");
+        node.right = rotacaoParaDireita(filho);
+        System.out.println(order());
+        print("rot_esq(" + node.value +")");
+        rotacaoParaEsquerda(node);
+        System.out.println(order());
     }
 
     public int height(Node node) {
@@ -147,22 +154,53 @@ public class Rotacoes {
         return 1 + Math.max(height(node.left), height(node.right));
     }
 
-    public void rebalance(Node node) {
+    private void rebalance(Node node) {
         if(node == null) {
             return;
         }
 
         int balanceamento = height(node.left) - height(node.right);
-        
-        if(balanceamento > 1) {
+
+        if(balanceamento == 1 || balanceamento == -1) {
+            rebalance(node.parent);
+        }
+
+        else if(balanceamento == 0) {
+            if(node.parent == null) {
+                print("balanceada");
+                return;
+
+            } else {
+                rebalance(node.parent);
+            }
+        }
+
+        else if(balanceamento > 1) {
             if(node.left.left != null) {
+                print("rot_dir(" + node.value + ")");
                 rotacaoParaDireita(node);
-            
+                System.out.println(order());
+
             } else {
                 rotacaoEsquerdaDireita(node);
             }
         }
-           
+
+        else {
+            if(node.right.right != null) {
+                print("rot_esq(" + node.value + ")");
+                rotacaoParaEsquerda(node);
+                System.out.println(order());
+
+            } else {
+                rotacaoDireitaEsquerda(node);
+            }
+
+        }
+    }
+
+    private void print(String s) {
+        System.out.println(s);
     }
 
 
