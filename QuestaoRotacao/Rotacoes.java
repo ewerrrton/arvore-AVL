@@ -176,24 +176,24 @@ public class Rotacoes {
         }
 
         else if(balanceamento > 1) {
-            if(node.left.left != null) {
+            if(node.left.right != null) {
+                rotacaoEsquerdaDireita(node);
+
+            } else {
                 print("rot_dir(" + node.value + ")");
                 rotacaoParaDireita(node);
                 System.out.println(order());
-
-            } else {
-                rotacaoEsquerdaDireita(node);
             }
         }
 
         else {
-            if(node.right.right != null) {
-                print("rot_esq(" + node.value + ")");
-                rotacaoParaEsquerda(node);
-                System.out.println(order());
+            if(node.right.left != null) {
+                rotacaoDireitaEsquerda(node);
 
             } else {
-                rotacaoDireitaEsquerda(node);
+                print("rot_ esq(" + node.value + ")");
+                rotacaoParaEsquerda(node);
+                System.out.println(order());
             }
 
         }
